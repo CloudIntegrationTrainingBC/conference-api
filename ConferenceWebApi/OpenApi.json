@@ -1,0 +1,500 @@
+﻿{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "Conference Api"
+  },
+  "schemes": [ "http", "https" ],
+  "host" :  "example.org",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "Home",
+        "description": "This is a discovery resource that contains a description of all the resources directly accessible in the API.",
+        "produces": [ "application/home+json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/home+json": {
+                "resources": {
+                  "http://tavis.net/rels/topics": {
+                    "href": "http://conferenceapi.azurewebsites.net/topics",
+                    "hints": {
+                      "allow": [
+                        "GET",
+                        "PUT",
+                        "DELETE"
+                      ],
+                      "formats": {
+                        "application/collection+json": { }
+                      }
+                    }
+                  },
+                  "http://tavis.net/rels/days": {
+                    "href": "http://conferenceapi.azurewebsites.net/days",
+                    "hints": {
+                      "allow": [
+                        "GET"
+                      ],
+                      "formats": {
+                        "application/vnd.collection+json": { }
+                      }
+                    }
+                  },
+                  "http://tavis.net/rels/sessions": {
+                    "href-template": "http://conferenceapi.azurewebsites.net/sessions{?dayno,keyword,speakername}",
+                    "href-vars": {
+                      "dayno": null,
+                      "keyword": null,
+                      "speakername": null
+                    },
+                    "hints": {
+                      "allow": [
+                        "GET"
+                      ],
+                      "formats": {
+                        "application/vnd.collection+json": { }
+                      }
+                    }
+                  },
+                  "http://tavis.net/rels/speakers": {
+                    "href-template": "http://conferenceapi.azurewebsites.net/speakers{?speakername}",
+                    "href-vars": {
+                      "speakername": null
+                    },
+                    "hints": {
+                      "allow": [
+                        "GET",
+                        "PUT",
+                        "DELETE"
+                      ],
+                      "formats": {
+                        "application/vnd.collection+json": { }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/days": {
+      "get": {
+        "operationId": "Retrieve Days",
+        "description": "Represents the days on which the conference will occur.",
+        "produces": [ "application/vnd.collection+json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/vnd.collection+json": {
+                "collection": {
+                  "version": "1.0",
+                  "links": [ ],
+                  "items": [
+                    {
+                      "data": [
+                        {
+                          "name": "Day",
+                          "value": "1"
+                        }
+                      ],
+                      "links": [
+                        {
+                          "rel": "http://tavis.net/rels/sessions",
+                          "href": "http://conferenceapi.azurewebsites.net/sessions?dayno=1"
+                        },
+                        {
+                          "rel": "http://tavis.net/rels/speakers",
+                          "href": "http://conferenceapi.azurewebsites.net/speakers?dayno=1"
+                        },
+                        {
+                          "rel": "http://tavis.net/rels/topics",
+                          "href": "http://conferenceapi.azurewebsites.net/topics?dayno=1"
+                        }
+                      ]
+                    }
+                  ],
+                  "queries": [ ],
+                  "template": {
+                    "data": [ ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/session/{id}": {
+      "get": {
+        "operationId": "Get Session by Id",
+        "description": "Retreive a representation of a single session by Id",
+        "produces": [ "application/hal+json", "text/plain" ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/session/{id}/topics": {
+      "get": {
+        "operationId": "Get Topics by SessionId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+
+        "operationId": "Get Sessions",
+        "description": "A list of sessions",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sessions/byspeakerid": {
+      "get": {
+        "operationId": "Get Sessions by SpeakerId in query",
+        "parameters": [
+          {
+            "name": "speakerId",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sessions/byspeakername": {
+      "get": {
+        "operationId": "Get Sessions by Speaker Name",
+        "description" :  "A list of sessions filtered by a speaker name",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "speakername",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sessions/byday": {
+      "get": {
+        "operationId": "Get Sessions by dayno",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "dayno",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sessions/bykeyword": {
+      "get": {
+        "operationId": "Get Sessions by Keyword",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/speaker/{id}": {
+      "get": {
+        "operationId": "Get Speaker by Id",
+        "produces": [
+          "application/vnd.hal+json",
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/speaker/{id}/sessions": {
+      "get": {
+        "operationId": "Get Sessions by SpeakerId",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+
+      }
+    },
+    "/speaker/{id}/topics": {
+      "get": {
+        "operationId": "Get Topics by SpeakerId",
+        "consumes": [ ],
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/speakers": {
+      "get": {
+        "operationId": "Get Speakers",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/speakers/byday": {
+      "get": {
+        "operationId": "Get Speakers by day",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "dayno",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/speakers/byspeakername": {
+      "get": {
+        "operationId": "Get Speakers by Speakername",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "speakername",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topic/{id}": {
+      "get": {
+        "operationId": "Get Topic by Id",
+        "produces": [
+          "application/hal+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topic/{id}/sessions": {
+      "get": {
+        "operationId": "Get Sessions by TopicId",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topic/{id}/speakers": {
+      "get": {
+        "operationId": "Get Speakers by TopicId",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topics": {
+      "get": {
+        "operationId": "Get Topics",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/topics/byday": {
+      "get": {
+        "operationId": "Get Topics  by Dayno",
+        "produces": [
+          "application/vnd.collection+json"
+        ],
+        "parameters": [
+          {
+            "name": "dayno",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
